@@ -64,43 +64,70 @@ class Game extends React.Component{
 			redIsNext: true,
 			stepNumber: 0,
 			movingPiece: null,
-			moveInProgress: false,
+			jumpInProgress: false,
 		};
 	}
 
 	handleClick(square){
-
 		const history = this.state.history.slice(0, this.state.stepNumber + 1);
 		const current = history[history.length - 1];
 		const squares = current.squares.slice();
 		const movingPiece = this.state.movingPiece;
-		const moveResult = legalMove(square, movingPiece, squares[movingPiece], squares);
-		
-		if(calculateWinner(current.squares))
+		let redIsNext = this.state.redIsNext;
+		let jump = this.state.jumpInProgress;
+
+
+		if(calculateWinner(current.squares) )
 			return null;
 
-		else if (moveResult[0]) {	
-			squares[square] = squares[movingPiece];
-			squares[movingPiece] = null;
+		if ((this.state.redIsNext && squares[movingPiece] ==='X') || (!this.state.redIsNext && squares[movingPiece] ==='O')) {	
 
-			if(moveResult[1])
-				squares[moveResult[1]] = null;
+			const moveResult = legalMove(square, movingPiece, squares[movingPiece], squares);
 
+			if (moveResult[0]){
+				squares[square] = squares[movingPiece];
+				squares[movingPiece] = null;
+
+				redIsNext = !redIsNext;
+
+				if(moveResult[1]){
+					squares[moveResult[1]] = null;
+					redIsNext = !redIsNext;
+					jump = true;
+				}
+				else{
+					square = null;
+					jump = false;
+				}
+
+				this.setState({
+					history: history.concat([{
+						squares: squares,
+					}]),
+					redIsNext: redIsNext,
+					stepNumber: history.length,
+					movingPiece: square,
+					jumpInProgress: jump,
+				});
+				return null;
+			}
+		}
+		
+		if(jump){
+			jump = false;
+			redIsNext = !redIsNext;
 			this.setState({
 				history: history.concat([{
 					squares: squares,
 				}]),
-				redIsNext: !this.state.redIsNext,
-				stepNumber: history.length,
-				movingPiece: square,
 			});
-			return null;
 		}
 
 		this.setState({
-				movingPiece: square,
-				moveInProgress: true,
-			});
+			movingPiece: square,
+			jumpInProgress: jump,
+			redIsNext: redIsNext,
+		});
 
 		return null;
 
@@ -114,7 +141,6 @@ class Game extends React.Component{
 		//for ( let i = 0; i < current.squares.length; ++i){
 		//	current.squares[i] = i;
 		//}
-
 		let status;
 		const winner = calculateWinner(current.squares);
 
@@ -293,7 +319,7 @@ function legalMove(square, movingPiece, turn, squares){
 		}
 
 	}
-	return false;
+	return [null, null];
 }
 
 function calculateWinner(squares){
@@ -305,8 +331,7 @@ function calculateWinner(squares){
 		if(squares[i] === 'O')
 			++black;
 	}
-	console.log(black);
-	console.log(red);
+
 	if(black && red === 8)
 		return 'Winner: Black!';
 	if(red && black === 8)
