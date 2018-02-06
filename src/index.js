@@ -76,7 +76,10 @@ class Game extends React.Component{
 		const movingPiece = this.state.movingPiece;
 		const moveResult = legalMove(square, movingPiece, squares[movingPiece], squares);
 		
-		if (moveResult[0]) {	
+		if(calculateWinner(current.squares))
+			return null;
+
+		else if (moveResult[0]) {	
 			squares[square] = squares[movingPiece];
 			squares[movingPiece] = null;
 
@@ -91,7 +94,6 @@ class Game extends React.Component{
 				stepNumber: history.length,
 				movingPiece: square,
 			});
-			console.log(this.state.moveInProgress);
 			return null;
 		}
 
@@ -112,9 +114,19 @@ class Game extends React.Component{
 		//for ( let i = 0; i < current.squares.length; ++i){
 		//	current.squares[i] = i;
 		//}
+
+		let status;
+		const winner = calculateWinner(current.squares);
+
+		if(winner)
+			status = winner;
+		else
+			status = this.state.redIsNext ? 'Making Move: Red' : 'Making Move: Black';
+
 		return (
 			<div className="game">
 				<div className="game-board">
+					{status}
 					<Board
 						squares = {current.squares}
 						onClick = {(i) => this.handleClick(i)}
@@ -281,5 +293,24 @@ function legalMove(square, movingPiece, turn, squares){
 		}
 
 	}
+	return false;
+}
+
+function calculateWinner(squares){
+	let red = 0;
+	let black = 0;
+	for( let i = 0; i < squares.length; ++i){
+		if(squares[i] === 'X')
+			++red;
+		if(squares[i] === 'O')
+			++black;
+	}
+	console.log(black);
+	console.log(red);
+	if(black && red === 8)
+		return 'Winner: Black!';
+	if(red && black === 8)
+		return 'Winner: Red!';
+
 	return false;
 }
