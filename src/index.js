@@ -5,18 +5,26 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
 function Square(props){
+	let className = "square " + props.value;
 	return(
-		<button className="square " onClick={props.onClick}>
-		</button>
+		(props.value == 'R') ?
+			<button className={className} onClick={props.onClick}></button> :
+			<button className={className}></button>
 	);
 }
 
 class Board extends React.Component{
 
-	renderSquare(i){
+	renderSquare(square, row){
+		const value = 
+			(row % 2) ? 
+				(square % 2) ? 'R' : 'B':
+				(square % 2) ? 'B' : 'R';
+
 		return(
-			<Square key={i}
-				onClick={() => this.props.onClick(i)}
+			<Square key={square}
+				onClick={() => this.props.onClick(square)}
+				value={value}
 			/>
 		);
 	}
@@ -30,7 +38,7 @@ class Board extends React.Component{
 			let rows = [];
 
 			for(let j = 0; j < 8; ++j){
-				rows.push(this.renderSquare(squareNum));
+				rows.push(this.renderSquare(squareNum, i));
 				++squareNum;
 			}
 			board.push(
@@ -39,7 +47,7 @@ class Board extends React.Component{
 		}
 
 		return(
-			<div>
+			<div className="board">
 				{board}
 			</div>
 		);
