@@ -79,23 +79,27 @@ class Game extends React.Component{
  	}
 
 	handleClick(square){
+
 		const history = this.state.history.slice(0, this.state.stepNumber + 1);
 		const current = history[history.length - 1];
 		const squares = current.squares.slice();
 		const movingPiece = this.state.movingPiece;
+
 		let redIsNext = this.state.redIsNext;
 		let jump = this.state.jumpInProgress;
-
 
 		if(calculateWinner(current.squares) )
 			return null;
 
-		if ((this.state.redIsNext && squares[movingPiece] ==='X') || (!this.state.redIsNext && squares[movingPiece] ==='O')) {	
-
-			const moveResult = legalMove(square, movingPiece, squares[movingPiece], squares);
+		if ((this.state.redIsNext && (squares[movingPiece] === 'X' || squares[movingPiece] === "XK")) || (!this.state.redIsNext && (squares[movingPiece] === 'O' || squares[movingPiece] === 'OK'))) {	
+			const moveResult = legalMove(square, movingPiece, squares[movingPiece], squares, jump);
 
 			if (moveResult[0]){
 				squares[square] = squares[movingPiece];
+
+				if([0, 2, 4, 6, 57, 59, 61, 63].indexOf(square) !== -1 && squares[square].length === 1)
+					squares[square] += 'K';
+
 				squares[movingPiece] = null;
 
 				redIsNext = !redIsNext;
@@ -192,7 +196,8 @@ class Game extends React.Component{
 ReactDOM.render(<Game />, document.getElementById('root'));
 
 
-function legalMove(square, movingPiece, turn, squares){
+function legalMove(square, movingPiece, turn, squares, jump){
+	//console.log(square, movingPiece, turn, jump);
 	const blackAllowed = [
 		[0, null, 9],
 		[2, 9, 11],
@@ -309,41 +314,67 @@ function legalMove(square, movingPiece, turn, squares){
 		[16, null, 2],
 	];
 
-	if (turn === 'O'){
+	if (turn === 'O' || turn === 'OK' || turn === 'XK'){
 		for (let i = 0; i < blackAllowed.length; ++i){
 			const [moving, left, right] = blackAllowed[i];
-			if(moving === movingPiece && ((left === square && squares[left] === null) || (right === square && squares[right] === null) ))
+			if(moving === movingPiece && ((left === square && squares[left] === null) || (right === square && squares[right] === null) )){
+				if (jump)
+					return [null, null];
 				return [true, null];
+			}
 		}
 
 		for (let i = 0; i < blackOverRed.length; ++i){
 			const [moving, left, right] = blackOverRed[i];
 			if(moving === movingPiece){
-				if(left === square && squares[left - 7] === "X" && squares[left] === null) 
-					return [true, left - 7];
-				if(right === square && squares[right - 9] === 'X' && squares[right] === null)
-					return [true, right - 9]; 
+
+				if 	(left === square && 
+					((squares[left - 7] === "X" || squares[left - 7] === 'XK') || 
+						(turn ==='XK' && (squares[left - 7] === 'O' || squares[left - 7] === 'OK')) || 
+						(turn ==='OK' && (squares[left - 7] === 'X' || squares[left - 7] === 'XK'))) && 
+					squares[left] === null)
+						return [true, left - 7];
+
+				if 	(right === square && 
+					((squares[right - 9] === "X" || squares[right - 9] === 'XK') || 
+						(turn ==='XK' && (squares[right - 9] === 'O' || squares[right - 9] === 'OK')) || 
+						(turn ==='OK' && (squares[right - 9] === 'X' || squares[right - 9] === 'XK'))) && 
+					squares[right] === null)
+						return [true, right - 9]; 
 			}
 		}
 	}
-	else if (turn === 'X'){
+
+	if (turn === 'X' || turn === 'OK' || turn === 'XK'){
 		for (let i = 0; i < redAllowed.length; ++i){
 			const [moving, left, right] = redAllowed[i];
-			if(moving === movingPiece && ((left === square && squares[left] === null) || (right === square && squares[right] === null)) )
-				return [true, null];
-		}
+			if(moving === movingPiece && ((left === square && squares[left] === null) || (right === square && squares[right] === null)) ){
+				if (jump)
+					return [null, null];
 
+				return [true, null];
+			}
+		}
 		for (let i = 0; i < redOverBlack.length; ++i){
 			const [moving, left, right] = redOverBlack[i];
 			if(moving === movingPiece){ 
-				if (left === square && squares[left + 9] === "O" && squares[left] === null) 
-					return [true, left + 9];
-				if (right === square && squares[right + 7] === 'O' && squares[right] === null)
-					return [true, right + 7];
+				if (left === square && 
+					((squares[left + 9] === "O" || squares[left + 9] === 'OK') || 
+						(turn === 'XK' && (squares[left + 9] === 'O' || squares[left + 9] === 'OK')) || 
+						(turn === 'OK' && (squares[left + 9] === 'X' || squares[left + 9] === 'XK'))) && 
+					squares[left] === null) 
+						return [true, left + 9];
+				if (right === square && 
+					((squares[right + 7] === 'O' || squares[right + 7] === 'OK') ||
+						(turn === 'XK' && (squares[right + 7] === 'O' || squares[right + 7] === 'OK')) ||
+						(turn === 'OK' && (squares[right + 7] === 'X' || squares[right + 7] === 'XK'))) && 
+					squares[right] === null)
+						return [true, right + 7];
 			}
 		}
 
 	}
+
 	return [null, null];
 
 	/*const illegalBlackMoves = [
@@ -482,9 +513,9 @@ function calculateWinner(squares){
 	let red = 0;
 	let black = 0;
 	for( let i = 0; i < squares.length; ++i){
-		if(squares[i] === 'X')
+		if(squares[i] === 'X' || squares[i] === 'XK')
 			++red;
-		if(squares[i] === 'O')
+		if(squares[i] === 'O' || squares[i] === 'OK')
 			++black;
 	}
 
