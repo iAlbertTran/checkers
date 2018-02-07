@@ -57,7 +57,7 @@ class Game extends React.Component{
 		super(props);
 		this.state = {
 			history: [{
-				squares: Array(64).fill('O', 0, 16).fill('X', 48, 64).fill(null, 16, 48),
+				squares: Array(64).fill(null).fill('O', 0, 16).fill('X', 48, 64),
 				//squares: Array(64).fill(null),
 
 			}],
@@ -65,8 +65,18 @@ class Game extends React.Component{
 			stepNumber: 0,
 			movingPiece: null,
 			jumpInProgress: false,
+		
+
 		};
 	}
+
+	jumpTo(step){
+
+	  	this.setState({
+	  		stepNumber: step,
+	  		redIsNext: (step % 2) === 0,
+	  	})
+ 	}
 
 	handleClick(square){
 		const history = this.state.history.slice(0, this.state.stepNumber + 1);
@@ -116,11 +126,6 @@ class Game extends React.Component{
 		if(jump){
 			jump = false;
 			redIsNext = !redIsNext;
-			this.setState({
-				history: history.concat([{
-					squares: squares,
-				}]),
-			});
 		}
 
 		this.setState({
@@ -149,6 +154,22 @@ class Game extends React.Component{
 		else
 			status = this.state.redIsNext ? 'Making Move: Red' : 'Making Move: Black';
 
+		let historyList = history.map((boardState, move) => {
+
+			const desc = move ? 
+				'Move #' + move :
+				'Start';
+
+	    	return (
+	    		<li key={move}>
+		        	{/* Bolds the most recent move in move history */}
+		        	{(move === this.state.stepNumber) ? 
+		    			<button className="highlighted" onClick={() => this.jumpTo(move)}>{desc}</button> :
+		          		<button onClick={() => this.jumpTo(move)}>{desc}</button>}
+	    		</li>
+	    	);
+		} );
+
 		return (
 			<div className="game">
 				<div className="game-board">
@@ -157,6 +178,10 @@ class Game extends React.Component{
 						squares = {current.squares}
 						onClick = {(i) => this.handleClick(i)}
 					/>
+				</div>
+				<div className="game-info">
+					Move History
+					<ol>{historyList}</ol>
 				</div>
 			</div>
 		);
@@ -320,6 +345,137 @@ function legalMove(square, movingPiece, turn, squares){
 
 	}
 	return [null, null];
+
+	/*const illegalBlackMoves = [
+		[0, false, true],
+		[15, true, false],
+		[16, false, true],
+		[31, true, false],
+		[32, false, true],
+		[47, true, false],
+		[48, false, true]
+	];
+
+	const illegalRedMoves = [
+		[63, true, false],
+		[48, false, true],
+		[47, true, false],
+		[32, false, true],
+		[31, true, false],
+		[16, false, true],
+		[15, true, false]
+
+	];
+
+	const illegalBlackJumps= [
+		[0, false, true],
+		[6, true, false],
+		[9, false, true],
+		[15, true, false],
+		[16, false, true],
+		[22, true, false],
+		[25, false, true],
+		[31, true, false],
+		[32, false, true],
+		[38, true, false],
+		[41, false, true],
+		[47, true, false]
+	];
+
+	const illegalRedJumps = [
+		[63, true, false],
+		[57, false, true],
+		[54, true, false],
+		[48, false, true],
+		[47, true, false],
+		[41, false, true],
+		[38, true, false],
+		[32, false, true],
+		[31, true, false],
+		[25, false, true],
+		[22, true, false],
+		[16, false, true]
+	];
+
+	if (turn === 'O'){
+		for (let i = 0; i < illegalBlackMoves.length; ++i){
+
+			const [moving, left, right] = illegalBlackMoves[i];
+
+			if(moving === movingPiece){ 
+
+				if (squares[square] || ((!left && square === movingPiece + 7) || (!right && square === movingPiece + 9)))
+					return [null, null];
+			}
+		}
+
+		if(squares[square])
+			return [null, null];
+
+		for (let i = 0; i < illegalBlackJumps.length; ++i){
+
+			const [moving, left, right] = illegalBlackJumps[i];
+
+			if(moving === movingPiece){
+
+				if((!left && square === movingPiece + 14) || (!right && square === movingPiece + 18))
+					return [null, null];
+			}
+		}
+
+		if(square - movingPiece > 10){
+
+			if(movingPiece + 14 === square && square[movingPiece + 7] === 'X')
+				return [true, movingPiece + 7];
+
+			if (movingPiece + 18 === square && square[movingPiece + 9] === 'X')
+				return [true, movingPiece + 9];
+		}
+
+		if(square === movingPiece + 7 || square === movingPiece + 9)
+			return [true, null];
+	}
+
+	else if (turn === 'X'){
+		for (let i = 0; i < illegalRedMoves.length; ++i){
+
+			const [moving, left, right] = illegalRedMoves[i];
+
+			if(moving === movingPiece){ 
+
+				if (squares[square] || ((!left && square === movingPiece - 9) || (!right && square === movingPiece - 7)))
+					return [null, null];
+			}
+		}
+
+		if(squares[square])
+			return [null, null];
+
+		for (let i = 0; i < illegalRedJumps.length; ++i){
+
+			const [moving, left, right] = illegalRedJumps[i];
+
+			if(moving === movingPiece){
+
+				if((!left && square === movingPiece - 18) || (!right && square === movingPiece - 14))
+					return [null, null];
+			}
+		}
+
+		if(movingPiece - square > 10){
+
+			if(movingPiece - 18 === square && square[movingPiece - 9] === 'O')
+				return [true, movingPiece - 9];
+			
+			if (movingPiece - 14 === square && square[movingPiece - 7] === 'O')
+				return [true, movingPiece - 7];
+		}
+
+		if(square === movingPiece - 9 || square === movingPiece - 7)
+			return [true, null];
+	}
+
+	return [null, null];*/
 }
 
 function calculateWinner(squares){

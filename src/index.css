@@ -9,21 +9,57 @@ body {
 #root{
 	width: inherit;
 	height: inherit;
+	background-color: #2897B7;
 }
 
 .game{
-	width: 50%;
-	height: 50%;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: row-reverse;
+
 }
 
 .game-board{
-	width: 100%;
-	height: 100%;
+	padding: 2.5%;
+	width: 50%;
+	height: 50%;
+
+}
+
+.game-info{
+	padding: 2.5%;
+	margin-right: 5%;
+	width: 25%;
+	height: 50%;
+	overflow: scroll;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+
+}
+
+.game-info button{
+	width: 50%;
+	color: #f8f8f8;
+	background-color: black;
+	border: transparent;
+	padding: 1%;
+	margin: 1% 0;
+
+	transition-property: border;
+	transition-duration: 0.5s;
+}
+
+.game-info .highlighted{
+	border: solid #FF4848;
 }
 
 .board{
 	width: 100%;
 	height: 100%;
+	margin: 2.5% 0;
 }
 
 .board-row{
@@ -48,5 +84,38 @@ body {
 
 .B{
 	background: black;
+}
+
+@media only screen and (max-width: 767px){
+	.game{
+		flex-direction: column;
+		align-items: center;
+		justify-content: space-around;
+
+	}
+
+	.game-board{
+		padding: 2.5%;
+		width: 85%;
+		height: 40%;
+
+	}
+
+	.game-info{
+		width: 85%;
+		height: 40%;
+
+		align-items: center;
+	}
+
+	.game-info ol{
+		width: 50%;
+	}
+	
+	.game-info button{
+		width: 100%;
+		padding: 5% 0;
+
+	}
 }
 
