@@ -4,9 +4,41 @@ import './index.css';
 
 function Square(props){
 	let className = "square " + props.color;
+	let value = props.value;
+	let classNames = "fas fa-chess-";
+
+	switch(value){
+		case 'O':
+			classNames += "pawn black-piece piece";
+			break;
+		case 'X':
+			classNames += "pawn red-piece piece";
+			break;
+		case 'OK':
+			classNames += "queen black-piece piece";
+			break;
+		case 'XK':
+			classNames += "queen red-piece piece";
+			break;
+		default: 
+			break;
+	}
+
+	let square;
+	if (value)
+		square = (<div>
+					<i className={classNames}></i>
+					<div className="piece-value">{value}</div>
+				</div>);
+
+
+
+
 	return(
 		(props.color === 'R') ?
-			<button className={className} onClick={props.onClick}>{props.value}</button> :
+			<button className={className} onClick={props.onClick}>
+				{square}
+			</button> :
 			<button className={className} onClick={props.onClick}></button>
 	);
 }
@@ -75,6 +107,8 @@ class Game extends React.Component{
 	  	this.setState({
 	  		stepNumber: step,
 	  		redIsNext: (step % 2) === 0,
+	  		jumpInProgress: false,
+	  		movingPiece: null,
 	  	})
  	}
 
@@ -146,7 +180,7 @@ class Game extends React.Component{
 	{
 		const history = this.state.history;
 		const current = history[this.state.stepNumber];
-
+		console.log(this.state.stepNumber);
 		//for ( let i = 0; i < current.squares.length; ++i){
 		//	current.squares[i] = i;
 		//}
