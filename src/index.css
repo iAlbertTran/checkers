@@ -22,26 +22,26 @@ body {
 
 .game-board{
 	padding: 2.5%;
-	width: 50%;
-	height: 50%;
+	width: 75%;
+	height: 75%;
 
 }
 
 .game-info{
 	padding: 2.5%;
-	margin-right: 5%;
-	width: 25%;
-	height: 50%;
+	width: 20%;
+	height: 75%;
 	overflow: scroll;
 
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
+	text-align: center;
 
 }
 
-.game-info button{
-	width: 50%;
+.game-info ol li button{
+	width: 100%;
 	color: #f8f8f8;
 	background-color: black;
 	border: transparent;
@@ -71,19 +71,39 @@ body {
 }
 
 .square{
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	width: 12.5%;
 	height: 100%;
 	padding: 0;
 	border: white solid 1px;
 	color: white;
+
 }
 
 .R{
-	background: red;
+	background: #F4A460;
 }
 
 .B{
 	background: black;
+}
+
+.piece-value{
+	display: none;
+}
+
+.piece{
+	font-size: 30px;
+}
+
+.black-piece{
+	color: black;
+}
+
+.red-piece{
+	color: red;
 }
 
 @media only screen and (max-width: 767px){
@@ -111,11 +131,15 @@ body {
 	.game-info ol{
 		width: 50%;
 	}
-	
+
 	.game-info button{
 		width: 100%;
 		padding: 5% 0;
 
+	}
+
+	.piece{
+		font-size: 20px;
 	}
 }
 
