@@ -2,8 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-function Square(props){
-	let className = "square " + props.color;
+function CheckerPiece(props){
+
+
 	let value = props.value;
 	let classNames = "fas fa-chess-";
 
@@ -24,20 +25,28 @@ function Square(props){
 			break;
 	}
 
-	let square;
-	if (value)
-		square = (<div>
-					<i className={classNames}></i>
-					<div className="piece-value">{value}</div>
-				</div>);
+	if (value){
+		return (
+			<div>
+				<i className={classNames}></i>
+				<div className="piece-value">{value}</div>
+			</div>
+		);
+	}
 
+	return null;
 
+}
 
+function Square(props){
+	let className = "square " + props.color;
 
 	return(
 		(props.color === 'R') ?
 			<button className={className} onClick={props.onClick}>
-				{square}
+				<CheckerPiece 
+					value={props.value}
+				/>
 			</button> :
 			<button className={className} onClick={props.onClick}></button>
 	);
@@ -180,7 +189,6 @@ class Game extends React.Component{
 	{
 		const history = this.state.history;
 		const current = history[this.state.stepNumber];
-		console.log(this.state.stepNumber);
 		//for ( let i = 0; i < current.squares.length; ++i){
 		//	current.squares[i] = i;
 		//}
@@ -218,7 +226,7 @@ class Game extends React.Component{
 					/>
 				</div>
 				<div className="game-info">
-					Move History
+					<div className="title">Move History</div>
 					<ol>{historyList}</ol>
 				</div>
 			</div>
@@ -231,7 +239,6 @@ ReactDOM.render(<Game />, document.getElementById('root'));
 
 
 function legalMove(square, movingPiece, turn, squares, jump){
-	//console.log(square, movingPiece, turn, jump);
 	const blackAllowed = [
 		[0, null, 9],
 		[2, 9, 11],
