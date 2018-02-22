@@ -2,6 +2,26 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+window.onload = window.onresize = function(){
+
+	const board = document.getElementsByClassName("board");
+	const square = document.getElementsByClassName("square");
+
+	if(board[0].clientWidth > board[0].clientHeight){
+		for(let i = 0; i < square.length; ++i){
+			square[i].style.width = board[0].clientHeight / 8 + "px";
+			square[i].style.height = board[0].clientHeight / 8 + "px";
+			console.log(square[i].style.height);
+		}
+	}
+	else{
+		for(let i = 0; i < square.length; ++i){
+			square[i].style.width = board[0].clientWidth / 8 + "px";
+			square[i].style.height = board[0].clientWidth / 8 + "px";
+		}
+	}
+}
+
 function CheckerPiece(props){
 
 
@@ -195,9 +215,17 @@ class Game extends React.Component{
 		const winner = calculateWinner(current.squares);
 
 		if(winner)
-			status = winner;
+			status = <div id="turn">{winner}</div>;
 		else
-			status = this.state.redIsNext ? 'Making Move: Red' : 'Making Move: Black';
+			status = this.state.redIsNext ? 
+				<div id="turn">
+					<div id="status-title">Making Move:</div>
+					<div className="red"><i className=" fas fa-chess-pawn"></i></div>
+				</div> : 
+				<div id="turn" className="black">
+					<div id="status-title">Making Move:</div>
+					<div className="black"><i className=" fas fa-chess-pawn"></i></div>
+				</div>;
 
 		let historyList = history.map((boardState, move) => {
 
@@ -218,7 +246,7 @@ class Game extends React.Component{
 		return (
 			<div className="game">
 				<div className="game-board">
-					{status}
+				{status}
 					<Board
 						squares = {current.squares}
 						onClick = {(i) => this.handleClick(i)}
@@ -276,6 +304,9 @@ function legalMove(square, movingPiece, turn, squares, jump){
 		case 'OK':
 			possibleMoves = [movingPiece - moveB, movingPiece - moveA, movingPiece + moveA, movingPiece + moveB];
 			break;
+
+		default:
+			return [null, null];
 	}
 
 	//corresponds to the space in between the moving piece and its potential destination. Used to check if it has the opponent piece occupying it.
@@ -309,15 +340,16 @@ function legalMove(square, movingPiece, turn, squares, jump){
 
 		//the piece in bteween must be an opponent piece
 		switch (turn){
+
 			case 'X':
 			case 'XK':
-				if(blackPieces.includes(squares[spaceInBetween]))
-					break;
+				if(blackPieces.includes(squares[spaceInBetween])){}
+				break;
 
 			case 'O':
 			case 'OK':
-				if(redPieces.includes(squares[spaceInBetween]))
-					break;
+				if(redPieces.includes(squares[spaceInBetween])){}
+				break;
 
 			default:
 				return [null, null];
