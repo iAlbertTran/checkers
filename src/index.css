@@ -23,7 +23,12 @@ body {
 .game-board{
 	padding: 2.5%;
 	width: 75%;
-	height: 75%;
+	height: 85%;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center
 
 }
 
@@ -49,11 +54,15 @@ body {
 
 .game-info .title{
 	width: 100%;
+	padding: 1%;
 	text-align: center;
+
+	border-top: black solid;
+	border-bottom: black solid;
 }
 
 .game-info ol{
-	padding: none;
+	padding: 0;
 }
 
 .game-info ol li{
@@ -74,29 +83,69 @@ body {
 }
 
 .game-info .highlighted{
-	border: solid #FF4848;
+	border: solid #FF3B3F;
+}
+
+#turn{
+	width: 75%;
+	height: 10%;
+
+	padding: 1%;
+	font-size: 45px;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+
+
+}
+
+#status-title{
+	font-size: 20px;
+}
+
+
+
+.red{
+	color: #FF3B3F;
+
+	transition-property: color;
+	transition-duration: 0.5s;
+}
+
+.black{
+	color: black;
+
+	transition-property: color;
+	transition-duration: 0.5s;
 }
 
 .board{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
 	width: 100%;
-	height: 100%;
+	height: 90%;
 	margin: 2.5% 0;
 }
 
 .board-row{
 	width: 100%;
-	height: 12.5%;
+	height: auto;
 
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
+	justify-content: center;
 }
 
 .square{
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	width: 12.5%;
-	height: 100%;
+
 	padding: 0;
 	border: white solid 1px;
 	color: white;
@@ -124,7 +173,7 @@ body {
 }
 
 .red-piece{
-	color: red;
+	color: #FF3B3F;
 }
 
 @media only screen and (max-width: 767px){
@@ -138,13 +187,13 @@ body {
 	.game-board{
 		padding: 2.5%;
 		width: 85%;
-		height: 40%;
+		height: 45%;
 
 	}
 
 	.game-info{
 		width: 85%;
-		height: 40%;
+		height: 45%;
 
 		align-items: center;
 	}
@@ -161,6 +210,14 @@ body {
 
 	.piece{
 		font-size: 20px;
+	}
+
+	#turn{
+		font-size: 25px;
+	}
+
+	#status-title{
+		font-size: 15px;
 	}
 }
 
