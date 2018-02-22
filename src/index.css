@@ -27,6 +27,12 @@ body {
 
 }
 
+/* pirated off internet for quick fix */
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+}
+
 .game-info{
 	padding: 2.5%;
 	width: 20%;
@@ -41,22 +47,30 @@ body {
 
 }
 
-/* pirated off internet for quick fix */
-::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
+.game-info .title{
+	width: 100%;
+	text-align: center;
+}
+
+.game-info ol{
+	padding: none;
+}
+
+.game-info ol li{
+	list-style: none;
 }
 
 .game-info ol li button{
 	width: 100%;
 	color: #f8f8f8;
 	background-color: black;
-	border: transparent;
-	padding: 1%;
-	margin: 1% 0;
+	border: transparent solid;
+	padding: 2.5%;
+	margin: 2.5% 0;
 
 	transition-property: border;
 	transition-duration: 0.5s;
+
 }
 
 .game-info .highlighted{
