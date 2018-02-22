@@ -38,6 +38,13 @@ body {
 	justify-content: flex-start;
 	text-align: center;
 
+
+}
+
+/* pirated off internet for quick fix */
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
 }
 
 .game-info ol li button{
